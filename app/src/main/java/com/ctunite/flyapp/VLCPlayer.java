@@ -3,8 +3,10 @@ package com.ctunite.flyapp;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.util.Log;
+import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 
@@ -39,9 +41,11 @@ public class VLCPlayer{
         options.add("--rtsp-tcp");//强制使用TCP方式
         options.add("--avcodec-hw=any"); //尝试使用硬件加速
         options.add("--live-caching=0");//缓冲时长
+        options.add("--file-caching=500"); //
 
         libVLC = new LibVLC(context, options);
         mediaPlayer = new MediaPlayer(libVLC);
+
     }
 
     /**
@@ -49,8 +53,10 @@ public class VLCPlayer{
      * @param textureView
      */
     public void setVideoSurface(TextureView textureView) {
-        mediaPlayer.getVLCVout().setVideoSurface(textureView.getSurfaceTexture());
+        mediaPlayer.getVLCVout().setVideoView(textureView);
+//        mediaPlayer.getVLCVout().setVideoSurface(textureView.getSurfaceTexture());
         mediaPlayer.getVLCVout().setWindowSize(textureView.getWidth(), textureView.getHeight());
+
         textureView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom,
@@ -64,6 +70,11 @@ public class VLCPlayer{
         });
         mediaPlayer.getVLCVout().attachViews();
     }
+
+//    @Override
+//    public void onSurFaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height){
+//
+//    }
 
     /**
      * 设置播放地址
